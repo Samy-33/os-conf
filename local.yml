@@ -1,0 +1,47 @@
+- name: Setup Arch
+  hosts: localhost
+  collections:
+    - community.general
+  tasks:
+    - name: Install packages
+      community.general.pacman:
+        name:
+          - git
+          - zip
+          - unzip
+          - neovim
+          - tmux
+          - kitty
+          - dunst
+          - polybar
+          - feh
+          - stow
+          - zsh
+          - chromium
+        state: present
+
+    - name: Create user
+      ansible.builtin.user:
+        name: saket
+        create_home: true
+        shell: /usr/bin/zsh
+        groups:
+          - wheel
+          - saket
+
+    - name: Add users packages
+      become_user: saket
+      community.general.pacman:
+        name:
+          - tmuxinator
+        state: present
+        executable: yay
+
+    - name: Setup directories
+      become_user: saket
+      ansible.builtin.file:
+        path:
+          - /home/saket/Documents
+          - /home/saket/hello-test/well
+        state: directory
+
